@@ -1,0 +1,20 @@
+.logo{
+    height: 10vh;
+}
+
+.account{
+    border-radius: 3px;
+    background-color: #0896dd;
+}
+
+.fill-63 {
+    min-height: 63vh;
+}
+
+.fill {
+    min-height: 68vh;
+}
+
+.bg-dark2{
+    background-color: rgba(0,0,0,30%);
+}
