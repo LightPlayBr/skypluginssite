@@ -1,24 +1,41 @@
 import Image from "next/image";
 import axios from 'axios';
 
-const authAxios = axios.create({
+
+/*const authAxios = axios.create({
     baseURL: "http://skyplugins-api.vercel.app/api"
-    /*headers: {
+    headers: {
         Authorization: `Bearer TOKEN-AQUI`
-    }*/
+    }
+})*/
+
+const authAxios = axios.create({
+    baseURL: "https://skyplugins-api.vercel.app/api",
+    headers: {
+        Authorization: `Bearer TOKEN-AQUI`
+    }
 })
 
-async function getPlugins() {
-    authAxios.get("/api/plugins/").then(
-        (response) => {
-            console.log("ok");
-        }, () => {
-            console.log("erro");
-        })
+
+export async function getStaticProps(){
+
+    const {data} = await authAxios(`/plugins`);
+
+    const {hot} = await authAxios(`/hot/4`);
+
+
+    return {
+        props: {
+            plugins: data.result,
+            hot: hot.result
+        },
+        revalidate: 60,
+    }
+
 }
 
-function Home() {
-    getPlugins()
+function Home(props) {
+
     return (
         <div className="bg-dark">
 
@@ -53,24 +70,30 @@ function Home() {
                 <div className="container rounded mt-2">
                     <div className="row justify-content-center">
 
-                        <div className="col-6 col-lg-2 m-lg-1 rounded p-1">
-                            <div className="bg-dark2 rounded p-3">
-                                <div className="d-flex justify-content-center">
-                                    <Image src="/static/images/icone_plugin.png" alt="Logo" width="100" height="100" />
+                        {
+                            props.hot.map((value, index)=> (
+
+                                <div className="col-6 col-lg-2 m-lg-1 rounded p-1" key={index}>
+                                    <div className="bg-dark2 rounded p-3">
+                                        <div className="d-flex justify-content-center">
+                                            <Image src="/static/images/icone_plugin.png" alt="Logo" width="100" height="100" />
+                                        </div>
+                                        <div className="h6 text-light text-center mt-3">
+                                            Teste
+                                        </div>
+                                        <div className="h4 text-light text-center mt-1">
+                                            R$ 10,00
+                                        </div>
+                                        <div className="text-light text-center mt-1 d-flex justify-content-center">
+                                            <a className="btn btn-primary me-1 add-to-cart" href="#" role="button"><i
+                                                className="fa fa-shopping-cart"></i></a>
+                                            <a className="btn btn-dark me-1" href="#" role="button">Ver detalhes</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="h6 text-light text-center mt-3">
-                                    Teste
-                                </div>
-                                <div className="h4 text-light text-center mt-1">
-                                    R$ 10,00
-                                </div>
-                                <div className="text-light text-center mt-1 d-flex justify-content-center">
-                                    <a className="btn btn-primary me-1 add-to-cart" href="#" role="button"><i
-                                        className="fa fa-shopping-cart"></i></a>
-                                    <a className="btn btn-dark me-1" href="#" role="button">Ver detalhes</a>
-                                </div>
-                            </div>
-                        </div>
+
+                            ))
+                        }
 
                         <div id="plugins"/>
 
@@ -88,25 +111,32 @@ function Home() {
                     <div className="row justify-content-center">
 
 
+                        {
+                            props.plugins.map((value, index)=> (
+                                <div className="col-6 m-0 col-lg-2 m-lg-1 rounded p-1" key={index}>
+                                    <div className="bg-dark2 rounded p-3">
+                                        <div className="d-flex justify-content-center">
+                                            <Image src="/static/images/icone_plugin.png" alt="Logo" width="100" height="100" />
+                                        </div>
+                                        <div className="h6 text-light text-center mt-3">
+                                            {value.name}
+                                        </div>
+                                        <div className="h4 text-light text-center mt-1">
+                                            {`${value.price},00`}
+                                        </div>
+                                        <div className="text-light text-center mt-1 d-flex justify-content-center">
+                                            <a className="btn btn-primary me-1 add-to-cart" href="#plugins" pl="<?= $plugin->id ?>" role="button"><i
+                                                className="fa fa-shopping-cart"></i></a>
+                                            <a className="btn btn-dark me-1" href={`plugin/${value.id}`} role="button">Ver detalhes</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
 
-                        <div className="col-6 m-0 col-lg-2 m-lg-1 rounded p-1">
-                            <div className="bg-dark2 rounded p-3">
-                                <div className="d-flex justify-content-center">
-                                    <Image src="/static/images/icone_plugin.png" alt="Logo" width="100" height="100" />
-                                </div>
-                                <div className="h6 text-light text-center mt-3">
-                                    Teste
-                                </div>
-                                <div className="h4 text-light text-center mt-1">
-                                    R$ 10,00
-                                </div>
-                                <div className="text-light text-center mt-1 d-flex justify-content-center">
-                                    <a className="btn btn-primary me-1 add-to-cart" href="#plugins" pl="<?= $plugin->id ?>" role="button"><i
-                                        className="fa fa-shopping-cart"></i></a>
-                                    <a className="btn btn-dark me-1" href="/plugin?id=<?= $plugin->id ?>" role="button">Ver detalhes</a>
-                                </div>
-                            </div>
-                        </div>
+
+
+
 
 
                     </div>
